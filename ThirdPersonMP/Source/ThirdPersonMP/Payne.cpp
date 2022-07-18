@@ -14,6 +14,7 @@
 #include "Engine/Engine.h"
 //	projectile
 #include "ThirdPersonMPProjectile.h"
+#include "Components/SphereComponent.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -49,6 +50,13 @@ APayne::APayne()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+
+	// collsctionsphere
+	CollectionSphereRadius = 200.f;
+
+	CollectionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("CollectionSphere"));
+	CollectionSphere->SetupAttachment(RootComponent);
+	CollectionSphere->SetSphereRadius(CollectionSphereRadius);
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
@@ -166,6 +174,7 @@ void APayne::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePr
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(APayne, CurrentHealth);
+	DOREPLIFETIME(APayne, CollectionSphereRadius);
 }
 
 void APayne::OnRep_CurrentHealth()
