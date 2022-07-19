@@ -17,24 +17,31 @@ public:
 
 	virtual void BeginPlay() override;
 
-	UFUNCTION(BlueprintPure,Category="Power")
+	UFUNCTION(BlueprintPure,Category="Pickup")
 	float GetDecayRate();
 
-	UFUNCTION(BlueprintPure,Category="Power")
+	UFUNCTION(BlueprintPure,Category="Pickup")
 	float GetPowerDrainDelay();
+
+	UFUNCTION(BlueprintPure,Category="Pickup")
+	float GetPowerToWin();
+
 
 private:
 	void DrainPowerOverTime();
 
 protected:
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Power",meta=(BlueprintProtected="true"))
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Pickup",meta=(BlueprintProtected="true"))
 	float DecayRate;
 	
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Power")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Pickup")
 	float PowerDrainDelay;
 
 	FTimerHandle PowerDrainTimer;
+
+	UPROPERTY(BlueprintReadWrite, Category="Pickup")
+	float PowerToWin;
 
 	
 

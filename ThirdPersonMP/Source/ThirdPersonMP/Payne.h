@@ -52,8 +52,14 @@ protected:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite,Category = Pickup, meta = (AllowPrivateAccess = "true"))
 	float InitialPower;
 
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite,Category = Pickup, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(ReplicatedUsing = OnRep_CurrentPower, EditAnywhere, BlueprintReadWrite,Category = Pickup, meta = (AllowPrivateAccess = "true"))
 	float CurrentPower;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Power", meta = (BlueprintProtected = "true"))
+	float BaseSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Power", meta = (BlueprintProtected = "true"))
+	float SpeedFactor;
 
 public:
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
@@ -65,6 +71,9 @@ public:
 	float BaseLookUpRate;
 
 
+private:
+	UFUNCTION()
+	void OnRep_CurrentPower();
 
 
 protected:
@@ -95,11 +104,38 @@ protected:
 
 	/** Handler for when a touch input stops. */
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
-
-protected:
+	
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	// End of APawn interface
+	
+	UFUNCTION()
+	void OnRep_CurrentHealth();
+
+	/** 响应要更新的生命值。修改后，立即在服务器上调用，并在客户端上调用以响应RepNotify*/
+	void OnHealthUpdate();
+	
+
+	/** 用于启动武器射击的函数。*/
+	UFUNCTION(BlueprintCallable, Category="Gameplay")
+	void StartFire();
+
+	/** 用于结束武器射击的函数。一旦调用这段代码，玩家可再次使用StartFire。*/
+	UFUNCTION(BlueprintCallable, Category = "Gameplay")
+	void StopFire();  
+
+	/** 用于生成投射物的服务器函数。*/
+	UFUNCTION(Server, Reliable)
+	void HandleFire();
+
+	UFUNCTION(BlueprintCallable, Category="Pickup")
+	void CollectPickups();
+
+	UFUNCTION(Reliable,Server,WithValidation)
+	void ServerCollecPickups();
+
+	UFUNCTION(BlueprintImplementableEvent, Category="Power")
+	void PowerChangeEffect();
 
 public:
 	APayne();
@@ -135,33 +171,6 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Power")
 	void UpdatePower(float DeltaPower);
 	
-	
-protected: // 防被外部C++类访问
-
-	UFUNCTION()
-	void OnRep_CurrentHealth();
-
-	/** 响应要更新的生命值。修改后，立即在服务器上调用，并在客户端上调用以响应RepNotify*/
-	void OnHealthUpdate();
-	
-
-	/** 用于启动武器射击的函数。*/
-	UFUNCTION(BlueprintCallable, Category="Gameplay")
-	void StartFire();
-
-	/** 用于结束武器射击的函数。一旦调用这段代码，玩家可再次使用StartFire。*/
-	UFUNCTION(BlueprintCallable, Category = "Gameplay")
-	void StopFire();  
-
-	/** 用于生成投射物的服务器函数。*/
-	UFUNCTION(Server, Reliable)
-	void HandleFire();
-
-	UFUNCTION(BlueprintCallable, Category="Pickup")
-	void CollectPickups();
-
-	UFUNCTION(Reliable,Server,WithValidation)
-	void ServerCollecPickups();
 	
 
 };

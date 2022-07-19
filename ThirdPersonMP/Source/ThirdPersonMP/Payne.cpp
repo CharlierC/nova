@@ -75,6 +75,9 @@ APayne::APayne()
 
 	InitialPower = 2000.f;
 	CurrentPower = InitialPower;
+
+	BaseSpeed = 10.0f;
+	SpeedFactor = 0.75f;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -106,7 +109,10 @@ void APayne::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompone
 }
 
 
-
+void APayne::OnRep_CurrentPower()
+{
+	PowerChangeEffect();
+}
 
 void APayne::OnResetVR()
 {
@@ -245,6 +251,10 @@ void APayne::UpdatePower(float DeltaPower)
 	if (GetLocalRole() == ROLE_Authority)
 	{
 		CurrentPower += DeltaPower;
+
+		GetCharacterMovement()->MaxWalkSpeed = BaseSpeed + SpeedFactor*CurrentPower;
+
+		OnRep_CurrentPower();
 	}
 }
 
