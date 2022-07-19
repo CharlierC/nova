@@ -10,6 +10,8 @@ APickup::APickup()
 	bReplicates = true;
 	PrimaryActorTick.bCanEverTick = false;
 
+	GetStaticMeshComponent()->SetGenerateOverlapEvents(true);
+
 	if (GetLocalRole() == ROLE_Authority)
 	{
 		bIsActive = true;
@@ -37,6 +39,21 @@ void APickup::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeP
 
 void APickup::OnRep_IsActive()
 {
+}
+
+void APickup::PickUpBy(APawn* Pawn)
+{
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		PickupInstigator = Pawn;
+		ClientOnPickUpBy(Pawn);
+	}
+}
+
+void APickup::ClientOnPickUpBy_Implementation(APawn* Pawn)
+{
+	PickupInstigator = Pawn;
+	WasCollected();
 }
 
 void APickup::WasCollected_Implementation()

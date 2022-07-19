@@ -23,16 +23,27 @@ public:
 	void SetActive(bool NewPickupState);
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
-	
-protected:
-	UFUNCTION()
-	virtual void OnRep_IsActive();
 
 	UFUNCTION(BlueprintNativeEvent, Category="Pickup")
 	void  WasCollected();
 	virtual void WasCollected_Implementation();
 
+	UFUNCTION()
+	virtual void OnRep_IsActive();
+	
+	UFUNCTION(BlueprintAuthorityOnly, Category="Pickup")
+	virtual void PickUpBy(APawn* Pawn);
+
+private:
+
+	UFUNCTION(NetMulticast, Unreliable)
+	void ClientOnPickUpBy(APawn* Pawn);
+	
 protected:
+	
 	UPROPERTY(ReplicatedUsing=OnRep_IsActive)
 	bool bIsActive;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Pickup")
+	APawn *PickupInstigator;
 };

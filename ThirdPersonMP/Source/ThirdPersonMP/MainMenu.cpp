@@ -3,7 +3,7 @@
 
 #include "MainMenu.h"
 #include "Kismet/GameplayStatics.h"
-//#include "CreateSessionCallbackProxy.h"
+#include "CreateSessionCallbackProxy.h"
 void UMainMenu::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -23,8 +23,8 @@ void UMainMenu::NativeConstruct()
 
 void UMainMenu::OnclickCreate()
 {
-	// APlayerController* playercontroller = UGameplayStatics::GetPlayerController(GetWorld(),0);
-	// UCreateSessionCallbackProxy::CreateSession(GetWorld(),playercontroller,2,true);
+	APlayerController* playercontroller = UGameplayStatics::GetPlayerController(GetWorld(),0);
+	UCreateSessionCallbackProxy::CreateSession(GetWorld(),playercontroller,2,true);
 	// if(UCreateSessionCallbackProxy::CreateSession(GetWorld(),playercontroller,2,true))
 	{
 		// const FName MapName("room");

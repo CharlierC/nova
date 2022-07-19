@@ -26,6 +26,8 @@ private:
 	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadWrite,Category = Pickup, meta = (AllowPrivateAccess = "true"))
 	float CollectionSphereRadius;
 
+	
+
 protected:
 	UPROPERTY(EditAnywhere, Category="Health")
 	float MaxHealth;
@@ -46,6 +48,12 @@ protected:
 
 	/** 定时器句柄，用于提供生成间隔时间内的射速延迟。*/
 	FTimerHandle FiringTimer;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite,Category = Pickup, meta = (AllowPrivateAccess = "true"))
+	float InitialPower;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite,Category = Pickup, meta = (AllowPrivateAccess = "true"))
+	float CurrentPower;
 
 public:
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
@@ -117,6 +125,16 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	float TakeDamage( float DamageTaken, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser ) override;
+
+	UFUNCTION(BlueprintPure, Category="Power")
+	float GetInitialPower();
+
+	UFUNCTION(BlueprintPure, Category="Power")
+	float GetCurrentPower();
+
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Power")
+	void UpdatePower(float DeltaPower);
+	
 	
 protected: // 防被外部C++类访问
 
@@ -139,6 +157,12 @@ protected: // 防被外部C++类访问
 	UFUNCTION(Server, Reliable)
 	void HandleFire();
 
+	UFUNCTION(BlueprintCallable, Category="Pickup")
+	void CollectPickups();
+
+	UFUNCTION(Reliable,Server,WithValidation)
+	void ServerCollecPickups();
+	
 
 };
 

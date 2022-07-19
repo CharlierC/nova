@@ -13,7 +13,20 @@ UCLASS()
 class THIRDPERSONMP_API ABatteryPickup : public APickup
 {
 	GENERATED_BODY()
+public:
 	ABatteryPickup();
+	
+	// virtual void WasCollected_Implementation() override;
+	virtual void PickUpBy(APawn* Pawn) override;
 
-	virtual void WasCollected_Implementation() override;
+	UFUNCTION(BlueprintPure, Category="Power")
+	float GetPower();
+	
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+protected:
+	UPROPERTY(Replicated,EditAnywhere,BlueprintReadWrite,Category="Power",meta=(BlueprintProtected="true"))
+	float BatteryPower;
+
+	
 };

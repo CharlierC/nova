@@ -13,6 +13,8 @@
 #include "Net/UnrealNetwork.h"
 #include "Engine/Engine.h"
 //	projectile
+#include "BatteryPickup.h"
+#include "Pickup.h"
 #include "ThirdPersonMPProjectile.h"
 #include "Components/SphereComponent.h"
 
@@ -70,6 +72,9 @@ APayne::APayne()
 	//初始化射速
 	FireRate = 0.25f;
 	bIsFiringWeapon = false;
+
+	InitialPower = 2000.f;
+	CurrentPower = InitialPower;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -93,14 +98,11 @@ void APayne::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &APayne::LookUpAtRate);
 
-	// handle touch devices
-	PlayerInputComponent->BindTouch(IE_Pressed, this, &APayne::TouchStarted);
-	PlayerInputComponent->BindTouch(IE_Released, this, &APayne::TouchStopped);
-
-	// VR headset functionality
-	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &APayne::OnResetVR);
-
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &APayne::StartFire);
+
+	PlayerInputComponent->BindAction("CollectPickups", IE_Pressed, this, &APayne::CollectPickups);
+
+	
 }
 
 
@@ -175,6 +177,8 @@ void APayne::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePr
 
 	DOREPLIFETIME(APayne, CurrentHealth);
 	DOREPLIFETIME(APayne, CollectionSphereRadius);
+	DOREPLIFETIME(APayne, CurrentPower);
+	DOREPLIFETIME(APayne, InitialPower);
 }
 
 void APayne::OnRep_CurrentHealth()
@@ -226,6 +230,24 @@ float APayne::TakeDamage(float DamageTaken, FDamageEvent const& DamageEvent, ACo
 	return damageApplied;
 }
 
+float APayne::GetInitialPower()
+{
+	return InitialPower;
+}
+
+float APayne::GetCurrentPower()
+{
+	return CurrentPower;
+}
+
+void APayne::UpdatePower(float DeltaPower)
+{
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		CurrentPower += DeltaPower;
+	}
+}
+
 void APayne::StartFire()
 {
 	if (!bIsFiringWeapon)
@@ -240,6 +262,42 @@ void APayne::StartFire()
 void APayne::StopFire()
 {
 	bIsFiringWeapon = false;
+}
+
+void APayne::CollectPickups()
+{
+	//FString healthMessage = FString::Printf(TEXT("Pressc"));         GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, healthMessage);
+	ServerCollecPickups();
+}
+
+void APayne::ServerCollecPickups_Implementation()
+{
+	
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		TArray<AActor*> CollectedActorsArray;
+		CollectionSphere->GetOverlappingActors(CollectedActorsArray);
+		for (int i = 0; i < CollectedActorsArray.Num(); ++i)
+		{
+			APickup* const tmp = Cast<APickup>(CollectedActorsArray[i]);
+			if (tmp != NULL && !tmp->IsPendingKill() && tmp->IsActive())
+			{
+				if (ABatteryPickup* tmpB = Cast<ABatteryPickup>(tmp))
+				{
+					UpdatePower(tmpB->GetPower());
+				}
+				tmp->PickUpBy(this);
+				tmp->SetActive(false);
+				// tmp->WasCollected();
+				
+			}
+		}
+	}
+}
+
+bool APayne::ServerCollecPickups_Validate()
+{
+	return true;
 }
 
 void APayne::HandleFire_Implementation()
