@@ -258,6 +258,29 @@ void APayne::UpdatePower(float DeltaPower)
 	}
 }
 
+void APayne::OnPlayerDeath_Implementation()
+{
+	DetachFromControllerPendingDestroy();
+	if(GetMesh())
+	{
+		static FName CollisionProfileName(TEXT("Ragdoll"));
+		GetMesh()->SetCollisionProfileName(CollisionProfileName);
+	}
+	SetActorEnableCollision(true);
+
+	GetMesh()->SetAllBodiesSimulatePhysics(true);
+	GetMesh()->SetSimulatePhysics(true);
+	GetMesh()->WakeAllRigidBodies();
+	GetMesh()->bBlendPhysics = true;
+
+	GetCharacterMovement()->StopMovementImmediately();
+	GetCharacterMovement()->DisableMovement();
+	GetCharacterMovement()->SetComponentTickEnabled(false);
+
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECR_Ignore);
+}
+
 void APayne::StartFire()
 {
 	if (!bIsFiringWeapon)

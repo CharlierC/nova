@@ -27,9 +27,6 @@ ASpawnVolume::ASpawnVolume()
 void ASpawnVolume::BeginPlay()
 {
 	Super::BeginPlay();
-
-	SpawnDelay = FMath::RandRange(SpawnDelayRangeLow, SpawnDelayRangeHigh);
-	GetWorldTimerManager().SetTimer(SpawnTimer,this,&ASpawnVolume::SpawnPickup,SpawnDelay,false);
 }
 
 void ASpawnVolume::SpawnPickup()
@@ -47,8 +44,9 @@ void ASpawnVolume::SpawnPickup()
 
 			APickup* const SpawnPickup = World->SpawnActor<APickup>(WhatToSpawn, SpawnLocation, SpawnRotation, SpawnParams);
 
-			SpawnDelay = FMath::RandRange(SpawnDelayRangeLow, SpawnDelayRangeHigh);
-			GetWorldTimerManager().SetTimer(SpawnTimer,this,&ASpawnVolume::SpawnPickup,SpawnDelay,false);
+			// SpawnDelay = FMath::RandRange(SpawnDelayRangeLow, SpawnDelayRangeHigh);
+			// GetWorldTimerManager().SetTimer(SpawnTimer,this,&ASpawnVolume::SpawnPickup,SpawnDelay,false);
+			SetSpawningActivate(true);
 		}
 	}
 }
@@ -67,5 +65,21 @@ FVector ASpawnVolume::GetRandomPointInVolume()
 		return UKismetMathLibrary::RandomPointInBoundingBox(WhereToSpawn->Bounds.Origin, WhereToSpawn->Bounds.BoxExtent);
 	}
 	return FVector();
+}
+
+void ASpawnVolume::SetSpawningActivate(bool bShouldSpawn)
+{
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		if (bShouldSpawn)
+		{
+			SpawnDelay = FMath::RandRange(SpawnDelayRangeLow, SpawnDelayRangeHigh);
+			GetWorldTimerManager().SetTimer(SpawnTimer,this,&ASpawnVolume::SpawnPickup,SpawnDelay,false);
+		}
+		else
+		{
+			GetWorldTimerManager().ClearTimer(SpawnTimer);
+		}
+	}
 }
 

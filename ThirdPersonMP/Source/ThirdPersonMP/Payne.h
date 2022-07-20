@@ -171,7 +171,8 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Power")
 	void UpdatePower(float DeltaPower);
 	
-	
+	UFUNCTION(NetMulticast, Reliable)
+	void OnPlayerDeath();
 
 };
 

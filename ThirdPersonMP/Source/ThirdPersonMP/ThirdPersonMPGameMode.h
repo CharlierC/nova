@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "MPGameStateBase.h"
 #include "ThirdPersonMPGameMode.generated.h"
 
 UCLASS(minimalapi)
@@ -24,11 +25,13 @@ public:
 	float GetPowerDrainDelay();
 
 	UFUNCTION(BlueprintPure,Category="Pickup")
-	float GetPowerToWin();
+	float GetPowerToWinMultiplier();
 
 
 private:
 	void DrainPowerOverTime();
+
+	void HandleNewState(EBatteryPlayState NewState);
 
 protected:
 
@@ -40,11 +43,12 @@ protected:
 
 	FTimerHandle PowerDrainTimer;
 
-	UPROPERTY(BlueprintReadWrite, Category="Pickup")
-	float PowerToWin;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category="Pickup",meta=(BlueprintProtected="ture"))
+	float PowerToWinMultiplier;
 
-	
+	int32 DeadPlayerCount;
 
+	TArray<class ASpawnVolume*> SpawnVolumeActors;
 	
 	
 };
