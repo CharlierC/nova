@@ -15,20 +15,22 @@ class THIRDPERSONMP_API UMainMenu : public UUserWidget
 {
 	GENERATED_BODY()
 public:
-	UPROPERTY(meta=(BindWidget))
-	UButton* ButtonCreate;
-	UPROPERTY(meta=(BindWidget))
-	UButton* ButtonJoin;
-	UPROPERTY(meta=(BindWidget))
-	UButton* ButtonSearch;
+	// UPROPERTY(meta=(BindWidget))
+	// UButton* ButtonCreate;
+	// UPROPERTY(meta=(BindWidget))
+	// UButton* ButtonJoin;
+	// UPROPERTY(meta=(BindWidget))
+	// UButton* ButtonSearch;
+	//
+	//
+	// UFUNCTION()
+	// void OnclickCreate();
+	// UFUNCTION()
+	// void OnclickJoin();
+	// UFUNCTION()
+	// void OnclickSearch();
 
 	virtual void NativeConstruct() override;
 
-	UFUNCTION()
-	void OnclickCreate();
-	UFUNCTION()
-	void OnclickJoin();
-	UFUNCTION()
-	void OnclickSearch();
 	
 };
