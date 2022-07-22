@@ -27,6 +27,9 @@ public:
 	UFUNCTION(BlueprintPure,Category="Pickup")
 	float GetPowerToWinMultiplier();
 
+	UFUNCTION(BlueprintCallable, Category="SeamlessTravel")
+	void SeamlessTravelTo(FString URL);
+
 
 private:
 	void DrainPowerOverTime();
@@ -47,9 +50,14 @@ protected:
 	float PowerToWinMultiplier;
 
 	int32 DeadPlayerCount;
-
-	TArray<class ASpawnVolume*> SpawnVolumeActors;
 	
+	TArray<class ASpawnVolume*> SpawnVolumeActors;
+
+	// virtual void PostLogin(APlayerController* NewPlayer) override;
+
+public:
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Room")
+	int32 ReadyPlayer;
 	
 };
 

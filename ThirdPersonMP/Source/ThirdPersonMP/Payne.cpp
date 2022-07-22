@@ -345,4 +345,34 @@ void APayne::HandleFire_Implementation()
 	AThirdPersonMPProjectile* spawnedProjectile = GetWorld()->SpawnActor<AThirdPersonMPProjectile>(spawnLocation, spawnRotation, spawnParameters);
 }
 
+void APayne::SeamlessTravelTo(FString URL)
+{
+	// UWorld* World = GetWorld();
+	// check(World);
+	// if (IsLocallyControlled())
+	// {
+	// 	World->GetFirstPlayerController()->ClientTravel(URL, ETravelType::TRAVEL_Relative, true);
+	// }
+	ServerSeamlessTravelTo(URL);
+
+}
+
+void APayne::ServerSeamlessTravelTo_Implementation(const FString &URL)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, FString::Printf(TEXT("doServer")));
+	
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, FString::Printf(TEXT("doServeriiifff")));
+		UWorld* World = GetWorld();
+		World->ServerTravel(URL, false);
+	}
+}
+
+bool APayne::ServerSeamlessTravelTo_Validate(const FString &URL)
+{
+	return true;
+}
+
+
 

@@ -33,6 +33,7 @@ AThirdPersonMPGameMode::AThirdPersonMPGameMode()
 	PowerDrainDelay = 0.25f;
 	PowerToWinMultiplier = 1.25f;
 	DeadPlayerCount = 0;
+	ReadyPlayer = 0;
 }
 
 void AThirdPersonMPGameMode::BeginPlay()
@@ -85,6 +86,30 @@ float AThirdPersonMPGameMode::GetPowerDrainDelay()
 float AThirdPersonMPGameMode::GetPowerToWinMultiplier()
 {
 	return PowerToWinMultiplier;
+}
+
+void AThirdPersonMPGameMode::SeamlessTravelTo(FString URL)
+{
+
+	if (GetLocalRole() == ROLE_Authority)
+	{
+	  UWorld* World = GetWorld();
+	  World->ServerTravel(URL, false);
+	}
+	// if (ReadyPlayer == GetNumPlayers())
+	// {
+		// UWorld* World = GetWorld();
+		// check(World);
+		// for (FConstControllerIterator It = World->GetControllerIterator(); It ; ++It)
+		// {
+		// 	if (APlayerController* PlayerController = Cast<APlayerController> (*It))
+		// 	{
+		// 		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, FString::Printf(TEXT("sssss")));
+		// 		PlayerController->ClientTravel(URL, ETravelType::TRAVEL_Relative, true);
+		// 	}
+		// }
+	// }
+
 }
 
 void AThirdPersonMPGameMode::DrainPowerOverTime()
@@ -157,3 +182,5 @@ void AThirdPersonMPGameMode::HandleNewState(EBatteryPlayState NewState)
 		}
 	}
 }
+
+

@@ -174,5 +174,11 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void OnPlayerDeath();
 
+	UFUNCTION(BlueprintCallable, Category="SeamlessTravel")
+	void SeamlessTravelTo(FString URL);
+
+	
+	UFUNCTION(Reliable,Server,WithValidation)
+	void ServerSeamlessTravelTo(const FString &URL);
 };
 

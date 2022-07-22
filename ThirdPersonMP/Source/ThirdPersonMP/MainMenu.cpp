@@ -3,7 +3,7 @@
 
 #include "MainMenu.h"
 #include "Kismet/GameplayStatics.h"
-//#include "CreateSessionCallbackProxy.h"
+#include "CreateSessionCallbackProxy.h"
 void UMainMenu::NativeConstruct()
 {
 	Super::NativeConstruct();
