@@ -45,6 +45,13 @@ public:
 	UPROPERTY(Replicated, BlueprintReadWrite, Category="Pickup")
 	float PowerToWin;
 
-	UPROPERTY(Replicated, BlueprintReadWrite)
+	UPROPERTY(Replicated, BlueprintReadWrite, Category="PlayerState")
 	FString WinningPlayerName;
+
+	UPROPERTY(Replicated, BlueprintReadWrite, Category="PlayerState")
+	int32 TotalPlayer;
+
+	UPROPERTY(Replicated, BlueprintReadWrite, Category="PlayerState")
+	int32 ReadyPlayer;
+	
 };
